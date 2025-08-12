@@ -1,0 +1,184 @@
+<div class="chat-container">
+  <!-- Header -->
+  <div class="chat-header" style="text-align: center; padding: 10px; background-color: #f5f5f5;">
+  <h1 style="margin: 0;">Welcome to ChatApp</h1>
+  <p style="margin: 0; font-size: 0.9em; color: rgb(0, 0, 0);">
+    {{ currentUser?.displayName || 'User' }} — {{ currentUser?.email }}
+  </p>
+  <!-- Sign Out Button -->
+  <button (click)="signOut()" class="signout-button">
+    Sign Out
+  </button>
+</div>
+  
+
+  <!-- Error Message -->
+  @if (errorMessage) {
+  <div class="error-banner">
+    <div class="error-content">
+      <span class="error-text">{{ errorMessage }}</span>
+      <button (click)="errorMessage = ''" class="error-close">✕</button>
+    </div>
+  </div>
+  }
+
+
+  <!-- Chat Interface -->
+  @if (isConnected) {
+  <div class="chat-interface">
+
+    @if (!selectedUser) {
+    <div class="partner-selection">
+      <div class="selection-header">
+        <h3>Conversation List:</h3>
+        <button (click)="ReloadUsers()" class="reload-button" [disabled]="loadingUsers">
+              <span *ngIf="!loadingUsers" class="reload-content">
+                Reload Chat
+              </span>
+          <span *ngIf="loadingUsers" class="reload-content">
+                <span class="loading-spinner-small"></span>
+                Wait...
+              </span>
+        </button>
+      </div>
+
+      @if (loadingUsers) {
+      <div class="users-loading">
+        <div class="loading-animation">
+          <div class="loading-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+      } @else if (availableUsers.length === 0) {
+      <div class="no-users-state">
+        <h4>Waiting for users to connect</h4>
+        <button (click)="ReloadUsers()" class="retry-button">
+          Search
+        </button>
+      </div>
+      } @else {
+      <div class="users-grid">
+        @for (user of availableUsers; track user.uid) {
+        <div class="user-card" (click)="selectUser(user)">
+          <div class="user-card-avatar">
+            <img
+              [src]="getUserAvatar(user)"
+              [alt]="getUserDisplayName(user)"
+              onerror="this.src='https://ui-avatars.com/api/?name=U&background=667eea&color=fff&size=50'"
+            >
+            <div class="online-indicator"></div>
+          </div>
+          <div class="user-card-info">
+            <h4>{{ getUserDisplayName(user) }}</h4>
+            <p>{{ user.email }}</p>
+          </div>
+          <div class="chat-arrow">→</div>
+        </div>
+        }
+      </div>
+      }
+    </div>
+    }
+
+    @if (selectedUser) {
+    <div class="chat-window">
+
+      <!-- Chat Header -->
+      <div class="chat-window-header">
+        <div class="chat-partner-info">
+          <button (click)="goBack()" class="back-button">
+            <span class="back-icon">←</span>
+          </button>
+          <div class="partner-avatar">
+            <img
+              [src]="getUserAvatar(selectedUser)"
+              [alt]="getUserDisplayName(selectedUser)"
+              onerror="this.src='https://ui-avatars.com/api/?name=U&background=667eea&color=fff&size=32'"
+            >
+          </div>
+          <div class="partner-details">
+            <h3>{{ getUserDisplayName(selectedUser) }}</h3>
+            <span class="partner-email">{{ selectedUser.email }}</span>
+          </div>
+        </div>
+        <div class="chat-actions">
+          <div class="connection-indicator" [class]="isConnected ? 'active' : 'inactive'">
+          </div>
+        </div>
+      </div>
+
+      @if (isLoading) {
+      <div class="chat-loading">
+        <div class="loading-spinner-chat"></div>
+        <p>Load conversation...</p>
+      </div>
+      }
+
+      <div class="messages-container" #messagesContainer>
+        @for (message of messages; track message.id || message.timestamp) {
+        <div class="message-bubble"
+             [class.my-message]="isMyMessage(message)"
+             [class.their-message]="!isMyMessage(message)">
+
+          <div class="message-content">{{ message.message }}</div>
+
+          <div class="message-footer">
+            <span class="message-time">{{ formatTimestamp(message.timestamp || '') }}</span>
+            @if (isMyMessage(message)) {
+            <span class="message-status">✓</span>
+            }
+          </div>
+        </div>
+        }
+
+        <!-- Typing Indicator -->
+        @if (selectedUser && isUserTyping(selectedUser.uid)) {
+        <div class="typing-indicator-bubble">
+          <div class="typing-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+        }
+
+        @if (messages.length === 0 && !isLoading) {
+        <div class="empty-chat-state">
+          <h4>There is no messages yet</h4>
+        </div>
+        }
+      </div>
+
+      <!-- Message Input -->
+      <div class="message-input-section">
+        @if (!isConnected) {
+        <div class="connection-warning">
+          Something error happening
+        </div>
+        }
+
+        <div class="message-composer">
+              <textarea
+                [(ngModel)]="newMessage"
+                (keypress)="onKeyPress($event)"
+                (input)="onMessageInput()"
+                placeholder="Type here ..."
+                rows="1"
+                class="message-input"
+                [disabled]="!isConnected"></textarea>
+          <button
+            (click)="sendMessage()"
+            [disabled]="!newMessage.trim() || !isConnected"
+            class="send-button">
+            <span class="send-icon">➤</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  }
+</div>

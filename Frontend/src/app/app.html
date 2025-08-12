@@ -1,0 +1,12 @@
+<div class="app-container">
+
+  <div *ngIf="isLoading" style="text-align: center; padding: 20px;">
+    <p>Loading...</p>
+  </div>
+  <div *ngIf="!isLoading">
+    <main style="padding: 0;">
+      <router-outlet></router-outlet>
+    </main>
+
+  </div>
+</div>
