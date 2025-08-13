@@ -4,12 +4,10 @@ import com.model.Concersation_Message;
 import com.service.FirebaseNotificationService;
 import com.service.MessageService;
 import com.websocket.WebSocket_Chat_Controller;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Map;
 
@@ -133,7 +131,7 @@ public class Conversation_Rest_Controller {
     @GetMapping("/info")
     public ResponseEntity<Map<String, String>> getSystemInfo() {
         return ResponseEntity.ok(Map.of(
-                "service", "ChatMe Assignment Backend",
+                "service", "ChatApp Project Backend",
                 "version", "1.0.0",
                 "status", "running",
                 "database", "MongoDB",
