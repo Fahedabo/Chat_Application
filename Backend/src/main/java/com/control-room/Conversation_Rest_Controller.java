@@ -1,5 +1,3 @@
-package com.controller;
-
 import com.model.Concersation_Message;
 import com.service.FirebaseNotificationService;
 import com.service.MessageService;
@@ -80,8 +78,7 @@ public class Conversation_Rest_Controller {
                         receiverId,
                         senderId,
                         messageContent,
-                        senderName
-                );
+                        senderName);
                 log.debug("Firebase push notification triggered successfully");
             } catch (Exception e) {
                 log.warn("Failed to send push notification: {}", e.getMessage());
@@ -119,25 +116,23 @@ public class Conversation_Rest_Controller {
         }
     }
 
-    @GetMapping("/health")
-    public ResponseEntity<Map<String, String>> healthCheck() {
-        return ResponseEntity.ok(Map.of(
-                "status", "healthy",
-                "service", "chat-api",
-                "timestamp", String.valueOf(System.currentTimeMillis())
-        ));
-    }
-
     @GetMapping("/info")
     public ResponseEntity<Map<String, String>> getSystemInfo() {
         return ResponseEntity.ok(Map.of(
-                "service", "ChatApp Project Backend",
+                "service", "chat-app project Backend",
                 "version", "1.0.0",
                 "status", "running",
                 "database", "MongoDB",
                 "websocket", "enabled",
                 "firebase-functions", "enabled",
-                "timestamp", String.valueOf(System.currentTimeMillis())
-        ));
+                "timestamp", String.valueOf(System.currentTimeMillis())));
+    }
+
+    @GetMapping("/health")
+    public ResponseEntity<Map<String, String>> healthCheck() {
+        return ResponseEntity.ok(Map.of(
+                "status", "healthy",
+                "service", "chat-api",
+                "timestamp", String.valueOf(System.currentTimeMillis())));
     }
 }
